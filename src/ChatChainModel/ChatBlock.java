@@ -1,6 +1,7 @@
 package ChatChainModel;
 
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -9,20 +10,24 @@ public class ChatBlock {
 	private String text;
 	private long timestamp;
 	private String TextHash;
-	private MessageDigest messageDigest;
 	private String prevBlockHash;
 	
 	
 	public ChatBlock(String text) {
 		try {
+			MessageDigest messageDigest;
+
 			messageDigest = MessageDigest.getInstance("SHA-256");
 			this.text = text;
 			this.timestamp = (System.currentTimeMillis());
-			messageDigest.update(this.text.getBytes());
+			messageDigest.update(this.text.getBytes("UTF-8"));
 			this.TextHash = new String(messageDigest.digest()); 
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			this.text = "ERROR AT BLOCK CREATION";
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		
@@ -32,12 +37,15 @@ public class ChatBlock {
 	public static String HashString(String text) {
 		try {
 			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-			messageDigest.update(text.getBytes());
+			messageDigest.update(text.getBytes("UTF-8"));
 			return (new String(messageDigest.digest())); 
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			return null;
 			
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			return null;
 		}		
 		
 	}

@@ -32,18 +32,18 @@ public class ListenAndReturn_Thread extends Thread {
 	public void run() {
 			System.out.println("listening");
 		try {
-			MulticastSocket s;
-			boolean chainreturned = false;
-			InetAddress askforChain;
-			askforChain = InetAddress.getByName(ASKFORCHAIN);
 			
-			s = new MulticastSocket(JOINPORT);
+			boolean chainreturned = false;
+			
+			while(true) {
+			InetAddress askforChain = InetAddress.getByName(ASKFORCHAIN);
+
+			MulticastSocket s = new MulticastSocket(65535);
 			
 			s.joinGroup(askforChain);
 			
 			byte[] buf = new byte[1000000];
 			DatagramPacket recv = new DatagramPacket(buf, buf.length);
-			//Espera hasta que le llega una petici�n de uni�n a la BC, cuando lo recibe return BC
 			s.receive(recv);
 			
 			ArrayList<ChatBlock> CC = askBCtoLocallhost();
@@ -52,15 +52,20 @@ public class ListenAndReturn_Thread extends Thread {
 			String toBeSended= gson.toJson(CC);
 			
 			
+			
+			
+			
+			
+			
 			InetAddress group = InetAddress.getByName(ASNWERCHAIN);
 			MulticastSocket answer = new MulticastSocket(JOINPORT);
 			DatagramPacket cc = new DatagramPacket(toBeSended.getBytes(), toBeSended.length(), group, JOINPORT);
-			s.send(cc);
+			Thread.sleep(500);
 			
+			answer.send(cc);
+			}
 			//SENDCHAIN
-			answer.close();
-			s.close();
-			s.leaveGroup(askforChain);			
+				
 			
 			
 			
@@ -68,6 +73,9 @@ public class ListenAndReturn_Thread extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -87,15 +95,17 @@ public class ListenAndReturn_Thread extends Thread {
 		
 		
 		String response = target.path("ChatChain").
-		                    path("Join").
+		                    path("getBlockChain").
 		                    request().
 		                    accept(MediaType.TEXT_PLAIN).
-		                    get(Response.class)
+		                    get(String.class)
 		                    .toString();
 		
 		Gson gson = new Gson();
-		Type ChainType = new TypeToken<ArrayList<ChatBlock>>(){}.getType();
-		ArrayList<ChatBlock> ObjetoMensaje = gson.fromJson(response, ChainType);
+		ArrayList<ChatBlock> ObjetoMensaje = null;
+		
+		 ObjetoMensaje = gson.fromJson(response, new TypeToken<ArrayList<ChatBlock>>(){}.getType());
+
 		return ObjetoMensaje;
 	}
 }

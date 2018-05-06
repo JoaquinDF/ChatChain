@@ -10,13 +10,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-public class MainClient {
+public class MainClient2 {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 			
 		Client clientjoin=ClientBuilder.newClient();;
-	    URI urijoin=UriBuilder.fromUri("http://localhost:8080/ChatChain/").build();
+	    URI urijoin=UriBuilder.fromUri("http://localhost:8082/ChatChain/").build();
 	    WebTarget targetjoin = clientjoin.target(urijoin);
 	    
 	    
