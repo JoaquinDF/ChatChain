@@ -28,7 +28,7 @@ import ChatChainModel.ChatBlock;
 public class newAdds_Thread extends Thread {
 		
 	
-	private final int JOINPORT = 6789;
+	private final int JOINPORT = 65535;
 	private final String ASKFORCHAIN = "228.5.6.25";
 	private final String ASNWERCHAIN = "228.5.6.8";
 	private final String MULTICASTBLOCK = "228.5.6.9";

@@ -11,7 +11,7 @@ import ChatChainModel.ChatBlock;
 
 public class txtReveiver_Thread extends Thread {
 
-	private final int JOINPORT = 6789;
+	private final int JOINPORT = 65535;
 	private final String BLOCKTOSHOW = "228.5.6.10";
 
 	public void run() {

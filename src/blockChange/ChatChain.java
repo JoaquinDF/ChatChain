@@ -37,7 +37,7 @@ public class ChatChain {
 	private ArrayList<ChatBlock> ChatChain = new ArrayList<>();
 	
 
-	private final int JOINPORT = 6789;
+	private final int JOINPORT = 65535;
 	private final String ASKFORCHAIN = "228.5.6.25";
 	private final String ASNWERCHAIN = "228.5.6.8";
 	private final String MULTICASTBLOCK = "228.5.6.9";
@@ -57,7 +57,7 @@ public class ChatChain {
 			
 			InetAddress group = InetAddress.getByName(ASKFORCHAIN);
 			MulticastSocket s = new MulticastSocket(JOINPORT);
-			DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, 6789);
+			DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group,JOINPORT );
 			s.send(hi);
 			
 			
@@ -71,7 +71,7 @@ public class ChatChain {
 			
 			r.joinGroup(updateChain);
 			
-			byte[] buf = new byte[100000];
+			byte[] buf = new byte[10000];
 			DatagramPacket recv = new DatagramPacket(buf, buf.length);
 
 			
@@ -162,7 +162,7 @@ public class ChatChain {
 			try {
 				group = InetAddress.getByName(BLOCKTOSHOW);
 				s = new MulticastSocket(JOINPORT);
-				DatagramPacket datagram = new DatagramPacket(msg.getBytes(), msg.length(), group, 6789);
+				DatagramPacket datagram = new DatagramPacket(msg.getBytes(), msg.length(), group, 65535);
 				s.send(datagram);
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
@@ -192,7 +192,7 @@ public class ChatChain {
 				try {
 					group = InetAddress.getByName(MULTICASTBLOCK);
 					s = new MulticastSocket(JOINPORT);
-					DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, 6789);
+					DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, 65535);
 					s.send(hi);
 				} catch (UnknownHostException e) {
 					// TODO Auto-generated catch block

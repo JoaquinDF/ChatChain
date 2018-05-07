@@ -25,7 +25,7 @@ import com.google.gson.Gson;
 import ChatChainModel.ChatBlock;
 
 public class ListenAndReturn_Thread extends Thread {
-	private final int JOINPORT = 6789;
+	private final int JOINPORT = 65535;
 	private final String ASKFORCHAIN = "228.5.6.25";
 	private final String ASNWERCHAIN = "228.5.6.8";
 	
@@ -38,7 +38,7 @@ public class ListenAndReturn_Thread extends Thread {
 			while(true) {
 			InetAddress askforChain = InetAddress.getByName(ASKFORCHAIN);
 
-			MulticastSocket s = new MulticastSocket(65535);
+			MulticastSocket s = new MulticastSocket(JOINPORT);
 			
 			s.joinGroup(askforChain);
 			

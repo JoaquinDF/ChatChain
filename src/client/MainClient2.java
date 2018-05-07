@@ -16,7 +16,7 @@ public class MainClient2 {
 		// TODO Auto-generated method stub
 			
 		Client clientjoin=ClientBuilder.newClient();;
-	    URI urijoin=UriBuilder.fromUri("http://localhost:8082/ChatChain/").build();
+	    URI urijoin=UriBuilder.fromUri("http://localhost:8085/ChatChain/").build();
 	    WebTarget targetjoin = clientjoin.target(urijoin);
 	    
 	    
