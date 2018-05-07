@@ -21,7 +21,7 @@ public class ChatBlock {
 			this.text = text;
 			this.timestamp = (System.currentTimeMillis());
 			messageDigest.update(this.text.getBytes("UTF-8"));
-			this.TextHash = new String(messageDigest.digest()); 
+			this.TextHash =  new String(messageDigest.digest(),"ISO-8859-1"); 
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			this.text = "ERROR AT BLOCK CREATION";
@@ -38,7 +38,7 @@ public class ChatBlock {
 		try {
 			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
 			messageDigest.update(text.getBytes("UTF-8"));
-			return (new String(messageDigest.digest())); 
+			return ( new String(messageDigest.digest(),"ISO-8859-1")); 
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			return null;

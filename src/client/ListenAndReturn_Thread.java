@@ -46,12 +46,13 @@ public class ListenAndReturn_Thread extends Thread {
 			DatagramPacket recv = new DatagramPacket(buf, buf.length);
 			s.receive(recv);
 			
-			ArrayList<ChatBlock> CC = askBCtoLocallhost();
+	ArrayList<ChatBlock> CC = askBCtoLocallhost();
 			
 			Gson gson = new Gson();
 			String toBeSended= gson.toJson(CC);
 			
-			
+	        byte[] output = toBeSended.getBytes("UTF-8");
+
 			
 			
 			
@@ -59,9 +60,8 @@ public class ListenAndReturn_Thread extends Thread {
 			
 			InetAddress group = InetAddress.getByName(ASNWERCHAIN);
 			MulticastSocket answer = new MulticastSocket(JOINPORT);
-			DatagramPacket cc = new DatagramPacket(toBeSended.getBytes(), toBeSended.length(), group, JOINPORT);
+			DatagramPacket cc = new DatagramPacket(output, output.length, group, JOINPORT);
 			Thread.sleep(500);
-			
 			answer.send(cc);
 			}
 			//SENDCHAIN

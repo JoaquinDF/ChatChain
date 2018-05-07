@@ -1,5 +1,8 @@
 package client;
 
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.URI;
 import java.util.Scanner;
 
@@ -11,10 +14,18 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 public class MainClient {
+	private static final String ASKFORCHAIN = "228.5.6.25";
+	private final static int JOINPORT = 65535;
 
-	public static void main(String[] args) {
+
+	public static void main(String[] args) throws Exception{
 		// TODO Auto-generated method stub
-			
+		
+	
+		
+		
+		
+		
 		Client clientjoin=ClientBuilder.newClient();;
 	    URI urijoin=UriBuilder.fromUri("http://localhost:8080/ChatChain/").build();
 	    WebTarget targetjoin = clientjoin.target(urijoin);

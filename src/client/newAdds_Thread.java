@@ -28,10 +28,10 @@ import ChatChainModel.ChatBlock;
 public class newAdds_Thread extends Thread {
 		
 	
-	private final int JOINPORT = 65535;
+	private final static int JOINPORT = 65535;
 	private final String ASKFORCHAIN = "228.5.6.25";
 	private final String ASNWERCHAIN = "228.5.6.8";
-	private final String MULTICASTBLOCK = "228.5.6.9";
+	private static final String MULTICASTBLOCK = "228.5.6.9";
 
 	public void run() {
 			System.out.println("updating BC");
@@ -39,7 +39,7 @@ public class newAdds_Thread extends Thread {
 			MulticastSocket s;
 			InetAddress updateChain;
 			updateChain = InetAddress.getByName(MULTICASTBLOCK);
-			
+			while(true) {
 			s = new MulticastSocket(JOINPORT);
 			
 			s.joinGroup(updateChain);
@@ -55,6 +55,7 @@ public class newAdds_Thread extends Thread {
 			String hash = newBC[1];
 			
 			if(ChatBlock.HashString(text) != hash) {
+				//hay que borrar el ultimo elemento de la BC
 				s.close();
 				s.leaveGroup(updateChain);
 				System.err.println("BLOQUES CORRUPTOS");
@@ -67,7 +68,7 @@ public class newAdds_Thread extends Thread {
                 path("add").
                 queryParam("text", text).
                 request(MediaType.TEXT_PLAIN).get(String.class);
-			    
+			}
 			    s.close();
 				s.leaveGroup(updateChain);
 			}

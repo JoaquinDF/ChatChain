@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import javax.inject.Singleton;
@@ -28,6 +29,7 @@ import com.google.gson.reflect.TypeToken;
 
 import ChatChainModel.ChatBlock;
 import client.ListenAndReturn_Thread;
+import client.newAdds_Thread;
 
 @Path("ChatChain") // ruta a la clase
 @Singleton
@@ -37,11 +39,11 @@ public class ChatChain {
 	private ArrayList<ChatBlock> ChatChain = new ArrayList<>();
 	
 
-	private final int JOINPORT = 65535;
-	private final String ASKFORCHAIN = "228.5.6.25";
-	private final String ASNWERCHAIN = "228.5.6.8";
-	private final String MULTICASTBLOCK = "228.5.6.9";
-	private final String BLOCKTOSHOW = "228.5.6.10";
+	private static final String ASKFORCHAIN = "228.5.6.25";
+	private final static int JOINPORT = 65535;
+	private static final String ASNWERCHAIN = "228.5.6.8";
+	private static final String MULTICASTBLOCK = "228.5.6.9";
+	private static final String BLOCKTOSHOW = "228.5.6.10";
 
 
 
@@ -52,14 +54,13 @@ public class ChatChain {
 
 		try {
 			
-			String msg = "hi!";
+			String msg = "Join";
 			System.out.println(msg);
 			
 			InetAddress group = InetAddress.getByName(ASKFORCHAIN);
 			MulticastSocket s = new MulticastSocket(JOINPORT);
-			DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group,JOINPORT );
+			DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
 			s.send(hi);
-			
 			
 			
 			
@@ -71,13 +72,15 @@ public class ChatChain {
 			
 			r.joinGroup(updateChain);
 			
-			byte[] buf = new byte[10000];
+			byte[] buf = new byte[10000000];
 			DatagramPacket recv = new DatagramPacket(buf, buf.length);
 
 			
 			r.receive(recv);
-			String newBC = new String(recv.getData(),0 , recv.getLength());
-			setInitialBC(newBC);
+			String response = new String(recv.getData(), 0, 
+                    recv.getLength(), "UTF-8");
+			
+			setInitialBC(response);
 			
 
 		} catch (IOException e1) {
@@ -162,7 +165,10 @@ public class ChatChain {
 			try {
 				group = InetAddress.getByName(BLOCKTOSHOW);
 				s = new MulticastSocket(JOINPORT);
-				DatagramPacket datagram = new DatagramPacket(msg.getBytes(), msg.length(), group, 65535);
+				byte[] output = msg.getBytes("UTF-8");
+				DatagramPacket datagram = new DatagramPacket(output, output.length, group, JOINPORT);
+				
+				
 				s.send(datagram);
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
@@ -192,7 +198,7 @@ public class ChatChain {
 				try {
 					group = InetAddress.getByName(MULTICASTBLOCK);
 					s = new MulticastSocket(JOINPORT);
-					DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, 65535);
+					DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
 					s.send(hi);
 				} catch (UnknownHostException e) {
 					// TODO Auto-generated catch block
@@ -221,7 +227,7 @@ public class ChatChain {
 	}
 
 	public void setChatChain(ArrayList<ChatBlock> chatChain) {
-		ChatChain = chatChain;
+		this.ChatChain = chatChain;
 		
 	}
 	
@@ -236,9 +242,19 @@ public class ChatChain {
 			String chain = IBC;
 			Gson gson = new Gson();
 			ArrayList<ChatBlock> ObjetoMensaje = null;
-			
+				try {
 			 ObjetoMensaje = gson.fromJson(IBC, new TypeToken<ArrayList<ChatBlock>>(){}.getType());
+				}catch (Exception e) {
+						System.err.println(e);
+				}
+				
 			 setChatChain(ObjetoMensaje);
+			 ListenAndReturn_Thread listenandReturn = new ListenAndReturn_Thread();
+			 newAdds_Thread newAdds = new newAdds_Thread();
+			 
+			 
+				listenandReturn.start();
+			 	newAdds.start();
 		}catch (Exception e) {
 			
 		}
