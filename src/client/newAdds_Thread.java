@@ -52,12 +52,22 @@ public class newAdds_Thread extends Thread {
 			
 			//Espera hasta que le llega una petici�n de uni�n a la BC, cuando lo recibe return BC
 			s.receive(recv);
-			String[] newBC = new String(recv.getData(),0 , recv.getLength()).split("BLOCKCHAIN");
+			String newBC = new String(recv.getData(),0 , recv.getLength());
 			
-			String text = newBC[0];
-			String hash = newBC[1];
+
+			Gson gson = new Gson();
 			
-			if(ChatBlock.HashString(text) != hash) {
+			
+			ChatBlock newBlock = gson.fromJson(newBC,ChatBlock.class);
+			ArrayList<ChatBlock> CC = askBCtoLocallhost();
+			ChatBlock prevBlock = CC.get(CC.size()-1);
+			
+			
+			
+			
+			
+			
+			if((ChatBlock.HashString(prevBlock.toString())== newBlock.getPrevBlockHash()) && newBlock.getTextHash()== ChatBlock.HashString(newBlock.getText())) {
 				//hay que borrar el ultimo elemento de la BC
 				
 				//ENVIAR UN ERROR.
@@ -66,28 +76,38 @@ public class newAdds_Thread extends Thread {
 				
 				InetAddress group = InetAddress.getByName(ASNWERMULTICASTBLOCK);
 				MulticastSocket answerblock = new MulticastSocket(JOINPORT);
-				DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
-				s.send(hi);
+				DatagramPacket error = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
+				s.send(error);
 				
 				
 				System.err.println("BLOQUES CORRUPTOS");
 			}else {
 				
-				//todo ok envia devuelve el multicast ok
+				String msg = "OK";
+				System.out.println(msg);
+				
+				InetAddress group = InetAddress.getByName(ASNWERMULTICASTBLOCK);
+				MulticastSocket answerblock = new MulticastSocket(JOINPORT);
+				DatagramPacket ok = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
+				s.send(ok);
+				
+				
 				Client client=ClientBuilder.newClient();;
 			    URI uri=UriBuilder.fromUri("http://localhost:8080/ChatChain/").build();
 				
 			    WebTarget target = client.target(uri);
 			    target.path("ChatChain").
                 path("add").
-                queryParam("text", text).
+                queryParam("justadd", "true").
                 request(MediaType.TEXT_PLAIN).get(String.class);
+			    
+			    
+				
+				
+				
+				
 			}
-			    s.close();
-				s.leaveGroup(updateChain);
 			}
-		
-			
 			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -101,20 +121,33 @@ public class newAdds_Thread extends Thread {
 		
 	}
 	
-	private void setInitialBC(String IBC) {
+
+	
+	
+	private ArrayList<ChatBlock> askBCtoLocallhost() {
+		
+		
+		
 		Client client=ClientBuilder.newClient();;
 	    URI uri=UriBuilder.fromUri("http://localhost:8080/ChatChain/").build();
 		
 	    WebTarget target = client.target(uri);
 		
 		
-		target.path("ChatChain").
-		                    path("setInitialBC").
-		                    queryParam("bc", IBC).
-		                    request(MediaType.TEXT_PLAIN).get(String.class);
+		String response = target.path("ChatChain").
+		                    path("getBlockChain").
+		                    request().
+		                    accept(MediaType.TEXT_PLAIN).
+		                    get(String.class)
+		                    .toString();
 		
+		Gson gson = new Gson();
+		ArrayList<ChatBlock> ObjetoMensaje = null;
 		
-		
+		 ObjetoMensaje = gson.fromJson(response, new TypeToken<ArrayList<ChatBlock>>(){}.getType());
+
+		return ObjetoMensaje;
 	}
+	
 }
 

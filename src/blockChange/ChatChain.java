@@ -152,22 +152,26 @@ public class ChatChain {
 	
 	
 	
-	
 	@GET // tipo de petición HTTP
 	@Produces(MediaType.TEXT_PLAIN) // tipo de texto devuelto
 	@Path("add") // ruta al método
-	public String addtext(@QueryParam(value="text") String text)  { // el método debe retornar String
+	public String addtext(@QueryParam(value="text")String text , @QueryParam(value="justadd")String justadd)  { // el método debe retornar String
 
 		ChatBlock Block = new ChatBlock(text);
+		if(justadd.equals("true")) {
+			getChatChain().add(Block);
+		}
 		
-		
-		
+			
 			if(getLastElement(getChatChain()).getTimestamp() < System.currentTimeMillis()) {
 				
 				Block.setPrevBlockHash(getLastElement(getChatChain()));
-				getChatChain().add(Block);
 				
-				String msg = text + "BLOCKCHAIN" + Block.getTextHash();
+				
+				Gson gson = new Gson();
+				String msg= gson.toJson(Block);
+				
+				
 				
 				InetAddress group;
 				try {
@@ -175,6 +179,10 @@ public class ChatChain {
 					MulticastSocket MulticastBlock = new MulticastSocket(JOINPORT);
 					DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
 					MulticastBlock.send(hi);
+					
+					
+					
+					
 					
 					InetAddress answer = InetAddress.getByName(ASNWERMULTICASTBLOCK);
 					
@@ -192,6 +200,14 @@ public class ChatChain {
 		                    recv.getLength(), "UTF-8");
 					
 					if(response.equals("ERROR")) {
+						
+					}else if(response.equals("OK")) {
+
+						getChatChain().add(Block);
+						group = InetAddress.getByName(BLOCKTOSHOW);
+						MulticastSocket MulticastShow = new MulticastSocket(JOINPORT);
+						DatagramPacket  sendShow= new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
+						MulticastBlock.send(sendShow);
 						
 					}
 					
