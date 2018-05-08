@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import org.eclipse.yasson.internal.serializer.AbstractNumberDeserializer;
 import org.glassfish.jersey.client.ClientConfig;
 
 import com.google.gson.Gson;
@@ -32,6 +33,8 @@ public class newAdds_Thread extends Thread {
 	private final String ASKFORCHAIN = "228.5.6.25";
 	private final String ASNWERCHAIN = "228.5.6.8";
 	private static final String MULTICASTBLOCK = "228.5.6.9";
+	private static final String ASNWERMULTICASTBLOCK = "228.5.6.19";
+
 
 	public void run() {
 			System.out.println("updating BC");
@@ -56,10 +59,21 @@ public class newAdds_Thread extends Thread {
 			
 			if(ChatBlock.HashString(text) != hash) {
 				//hay que borrar el ultimo elemento de la BC
-				s.close();
-				s.leaveGroup(updateChain);
+				
+				//ENVIAR UN ERROR.
+				String msg = "ERROR";
+				System.out.println(msg);
+				
+				InetAddress group = InetAddress.getByName(ASNWERMULTICASTBLOCK);
+				MulticastSocket answerblock = new MulticastSocket(JOINPORT);
+				DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
+				s.send(hi);
+				
+				
 				System.err.println("BLOQUES CORRUPTOS");
 			}else {
+				
+				//todo ok envia devuelve el multicast ok
 				Client client=ClientBuilder.newClient();;
 			    URI uri=UriBuilder.fromUri("http://localhost:8080/ChatChain/").build();
 				

@@ -44,6 +44,8 @@ public class ChatChain {
 	private static final String ASNWERCHAIN = "228.5.6.8";
 	private static final String MULTICASTBLOCK = "228.5.6.9";
 	private static final String BLOCKTOSHOW = "228.5.6.10";
+	private static final String ASNWERMULTICASTBLOCK = "228.5.6.19";
+
 
 
 
@@ -157,36 +159,9 @@ public class ChatChain {
 	public String addtext(@QueryParam(value="text") String text)  { // el método debe retornar String
 
 		ChatBlock Block = new ChatBlock(text);
-		if(getChatChain().indexOf(Block)!=-1) {
-			
-			//Ya existe luego se valida.
-			String msg = text;
-			InetAddress group;
-			try {
-				group = InetAddress.getByName(BLOCKTOSHOW);
-				s = new MulticastSocket(JOINPORT);
-				byte[] output = msg.getBytes("UTF-8");
-				DatagramPacket datagram = new DatagramPacket(output, output.length, group, JOINPORT);
-				
-				
-				s.send(datagram);
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			
-			
-			
-			return "";
-		}
 		
-		if(getChatChain().size()==0) {
-			getChatChain().add(Block);
-		}else {
+		
+		
 			if(getLastElement(getChatChain()).getTimestamp() < System.currentTimeMillis()) {
 				
 				Block.setPrevBlockHash(getLastElement(getChatChain()));
@@ -197,9 +172,32 @@ public class ChatChain {
 				InetAddress group;
 				try {
 					group = InetAddress.getByName(MULTICASTBLOCK);
-					s = new MulticastSocket(JOINPORT);
+					MulticastSocket MulticastBlock = new MulticastSocket(JOINPORT);
 					DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
-					s.send(hi);
+					MulticastBlock.send(hi);
+					
+					InetAddress answer = InetAddress.getByName(ASNWERMULTICASTBLOCK);
+					
+					MulticastSocket MulticastBlockAnswer = new MulticastSocket(JOINPORT);
+					
+					MulticastBlockAnswer.joinGroup(answer);
+					
+					byte[] buf = new byte[10000000];
+					DatagramPacket recv = new DatagramPacket(buf, buf.length);
+
+					
+					MulticastBlockAnswer.receive(recv);
+					
+					String response = new String(recv.getData(), 0, 
+		                    recv.getLength(), "UTF-8");
+					
+					if(response.equals("ERROR")) {
+						
+					}
+					
+					
+					
+					
 				} catch (UnknownHostException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -215,7 +213,7 @@ public class ChatChain {
 			}else {
 				return "Error";
 			}
-		}
+		
 		
 		return "added";
 	}
