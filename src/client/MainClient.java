@@ -48,6 +48,7 @@ public class MainClient {
 				Scanner keyboard = new Scanner(System.in);
 				System.out.println("> ");
 				txt = keyboard.nextLine();
+				
 				Client client=ClientBuilder.newClient();;
 			    URI uri=UriBuilder.fromUri("http://localhost:8080/ChatChain/").build();
 				

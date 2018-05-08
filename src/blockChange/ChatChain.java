@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import javax.inject.Singleton;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -155,12 +156,19 @@ public class ChatChain {
 	@GET // tipo de petición HTTP
 	@Produces(MediaType.TEXT_PLAIN) // tipo de texto devuelto
 	@Path("add") // ruta al método
-	public String addtext(@QueryParam(value="text")String text , @QueryParam(value="justadd")String justadd)  { // el método debe retornar String
-
+	public String addtext( @QueryParam(value="text")String text , @QueryParam(value="justadd")String justadd)  { // el método debe retornar String
+	
 		ChatBlock Block = new ChatBlock(text);
-		if(justadd.equals("true")) {
+		if(justadd!=null && justadd.equals("true")) {
 			getChatChain().add(Block);
+			return "ok";
+			
 		}
+		
+		//rest para add
+		
+	
+		
 		
 			
 			if(getLastElement(getChatChain()).getTimestamp() < System.currentTimeMillis()) {
@@ -206,7 +214,7 @@ public class ChatChain {
 						getChatChain().add(Block);
 						group = InetAddress.getByName(BLOCKTOSHOW);
 						MulticastSocket MulticastShow = new MulticastSocket(JOINPORT);
-						DatagramPacket  sendShow= new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
+						DatagramPacket  sendShow= new DatagramPacket(Block.getText().getBytes(), Block.getText().length(), group, JOINPORT);
 						MulticastBlock.send(sendShow);
 						
 					}

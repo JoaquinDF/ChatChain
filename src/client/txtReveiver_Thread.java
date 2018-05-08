@@ -16,6 +16,10 @@ public class txtReveiver_Thread extends Thread {
 	private final int JOINPORT = 65535;
 	private final String BLOCKTOSHOW = "228.5.6.10";
 	private Map<String,Long> msgList;
+	private String originaddress = "";
+	
+	
+	
 	public void run() {
 		System.out.println("recibiendo" + System.lineSeparator());
 		while(true) {
@@ -35,16 +39,22 @@ public class txtReveiver_Thread extends Thread {
 			s.receive(recv);
 			
 			String msg = new String(recv.getData(), 0,recv.getLength());
+			
+			
+			
 			if(!msgList.containsKey(msg)) {
-				System.out.println(msg);
 				msgList.put(msg, System.currentTimeMillis());
 
 			}else {
 				if(Math.abs((msgList.get(msg) - System.currentTimeMillis()))>1000) {
+				
 					System.out.println(msg);
+					
 					msgList.put(msg, System.currentTimeMillis());
 				}
-			}
+			}			
+				
+			
 			
 		} catch (Exception e) {
 			// TODO: handle exception

@@ -26,7 +26,7 @@ import com.google.gson.reflect.TypeToken;
 
 import ChatChainModel.ChatBlock;
 
-public class newAdds_Thread extends Thread {
+public class newAdds_Thread extends Thread  {
 		
 	
 	private final static int JOINPORT = 65535;
@@ -47,12 +47,13 @@ public class newAdds_Thread extends Thread {
 			
 			s.joinGroup(updateChain);
 			
-			byte[] buf = new byte[1000000000];
+			byte[] buf = new byte[10000000];
 			DatagramPacket recv = new DatagramPacket(buf, buf.length);
 			
 			//Espera hasta que le llega una petici�n de uni�n a la BC, cuando lo recibe return BC
 			s.receive(recv);
-			String newBC = new String(recv.getData(),0 , recv.getLength());
+			String newBC = new String(recv.getData(), 0, 
+                    recv.getLength(), "UTF-8");
 			
 
 			Gson gson = new Gson();
@@ -99,6 +100,7 @@ public class newAdds_Thread extends Thread {
 			    target.path("ChatChain").
                 path("add").
                 queryParam("justadd", "true").
+                queryParam("text", newBlock.getText()).
                 request(MediaType.TEXT_PLAIN).get(String.class);
 			    
 			    
