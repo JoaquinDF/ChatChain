@@ -4,6 +4,7 @@ package ChatChainModel;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 public class ChatBlock {
 	
@@ -14,21 +15,12 @@ public class ChatBlock {
 	
 	
 	public ChatBlock(String text) {
-		try {
-			MessageDigest messageDigest;
+		
 
-			messageDigest = MessageDigest.getInstance("SHA-256");
 			this.text = text;
 			this.timestamp = (System.currentTimeMillis());
-			messageDigest.update(this.text.getBytes("UTF-8"));
-			this.TextHash =  new String(messageDigest.digest(),"ISO-8859-1"); 
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			this.text = "ERROR AT BLOCK CREATION";
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			this.TextHash =  HashString(this.text);
+		
 		
 		
 		
@@ -37,8 +29,17 @@ public class ChatBlock {
 	public static String HashString(String text) {
 		try {
 			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-			messageDigest.update(text.getBytes("UTF-8"));
-			return ( new String(messageDigest.digest(),"ISO-8859-1")); 
+			
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			
+			byte[] hash = digest.digest(text.getBytes("UTF-8"));
+			String encoded = Base64.getEncoder().encodeToString(hash);
+			
+			return (encoded); 
+			
+			
+			
+			
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			return null;

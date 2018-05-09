@@ -85,11 +85,11 @@ public class newAdds_Thread extends Thread  {
 			}else {
 				
 				String msg = "OK";
-				System.out.println(msg);
 				
 				InetAddress group = InetAddress.getByName(ASNWERMULTICASTBLOCK);
 				MulticastSocket answerblock = new MulticastSocket(JOINPORT);
 				DatagramPacket ok = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
+				System.out.println("Enviando el OK al bloque Multicast");
 				s.send(ok);
 				
 				

@@ -27,7 +27,7 @@ public class MainClient {
 		
 		
 		Client clientjoin=ClientBuilder.newClient();;
-	    URI urijoin=UriBuilder.fromUri("http://localhost:8080/ChatChain/").build();
+	    URI urijoin=UriBuilder.fromUri("http://172.20.1.71:8080/ChatChain/").build();
 	    WebTarget targetjoin = clientjoin.target(urijoin);
 	    
 	    
@@ -50,12 +50,13 @@ public class MainClient {
 				txt = keyboard.nextLine();
 				
 				Client client=ClientBuilder.newClient();;
-			    URI uri=UriBuilder.fromUri("http://localhost:8080/ChatChain/").build();
+			    URI uri=UriBuilder.fromUri("http://172.20.1.71:8080/ChatChain/").build();
 				
 			    WebTarget target = client.target(uri);
 			    target.path("ChatChain").
                 path("add").
                 queryParam("text", txt).
+                queryParam("justadd" , "false").
                 request(MediaType.TEXT_PLAIN).get(String.class);
 			    
 				
