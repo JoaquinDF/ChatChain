@@ -198,6 +198,7 @@ public class ChatChain {
 					MulticastBlock.send(sendShow);
 
 				}
+				socket.close();
 
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block

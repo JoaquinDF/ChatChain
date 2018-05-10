@@ -77,7 +77,7 @@ public class newAdds_Thread extends Thread  {
 				//ENVIAR UN ERROR.
 				String msg = "ERROR";
 				System.out.println(msg);
-				//respuesta a la dirección que envía
+				//respuesta a la direcciï¿½n que envï¿½a
 				InetAddress unicastanswer = recv.getAddress();
 				
 				DatagramSocket answerblock = new DatagramSocket();
@@ -85,7 +85,7 @@ public class newAdds_Thread extends Thread  {
 				 DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), unicastanswer, SINGLECASTPORT);
 				 answerblock.send(packet);
 				
-				
+				 answerblock.close();
 				
 				System.err.println("BLOQUES CORRUPTOS");
 			}else {
