@@ -46,19 +46,10 @@ public class txtReveiver_Thread extends Thread {
 			s.receive(recv);
 			
 			String msg = new String(recv.getData(), 0,recv.getLength());
-			
+			s.close();
 
-			if(!recv.getAddress().getHostName().equals(InetAddress.getLocalHost().getHostAddress())) {
-				Client client=ClientBuilder.newClient();;
-			    URI uri=UriBuilder.fromUri("http://localhost:8080/ChatChain/").build();
-				
-			    WebTarget target = client.target(uri);
-			    target.path("ChatChain").
-	            path("add").
-	            queryParam("justadd", "true").
-	            queryParam("text", msg).
-	            request(MediaType.TEXT_PLAIN).get(String.class);
-			}
+			
+			
 			
 			if(!msgList.containsKey(msg)) {
 				msgList.put(msg, System.currentTimeMillis());

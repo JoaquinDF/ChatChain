@@ -1,12 +1,13 @@
 package blockChange;
 
 import java.io.IOException;
-
+import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
@@ -44,6 +45,7 @@ public class ChatChain {
 	public String Join() { // el método debe retornar String
 
 		try {
+			if(getChatChain().size()!=0)return("ok");
 
 			String msg = "Join";
 			System.out.println(msg);
@@ -118,6 +120,7 @@ public class ChatChain {
 	public String setUP() { // el método debe retornar String
 
 		ChatBlock initial = new ChatBlock("initial");
+		getChatChain().clear();
 		getChatChain().add(initial);
 
 		ListenAndReturn_Thread listenandReturn = new ListenAndReturn_Thread();
@@ -134,10 +137,19 @@ public class ChatChain {
 
 		ChatBlock Block = new ChatBlock(text);
 		if (justadd != null && justadd.equals("true")) {
+			Gson gson = new Gson();
+			try {
+				text = URLDecoder.decode(text,"UTF-8");
+				System.out.println(text);
+				ChatBlock newBlock = gson.fromJson(text,ChatBlock.class);
+				newBlock.setPrevBlockHash(getLastElement(getChatChain()));
+				getChatChain().add(newBlock);
+				return "ok";
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
-			Block.setPrevBlockHash(getLastElement(getChatChain()));
-			getChatChain().add(Block);
-			return "ok";
 
 		}
 
@@ -172,14 +184,13 @@ public class ChatChain {
 
 				} else if (response.equals("OK")) {
 
-					getChatChain().add(Block);
 
-					group = InetAddress.getByName(BLOCKTOSHOW);
+					InetAddress groupBlockToShow = InetAddress.getByName(BLOCKTOSHOW);
 					MulticastSocket MulticastShow = new MulticastSocket(JOINPORT);
 					DatagramPacket sendShow = new DatagramPacket(Block.getText().getBytes(), Block.getText().length(),
-							group, JOINPORT);
+							groupBlockToShow, JOINPORT);
 					MulticastBlock.send(sendShow);
-
+					
 				}
 				socket.close();
 

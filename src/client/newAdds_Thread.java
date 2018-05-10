@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.Socket;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
@@ -48,8 +49,11 @@ public class newAdds_Thread extends Thread  {
 			byte[] buf = new byte[10000000];
 			DatagramPacket recv = new DatagramPacket(buf, buf.length);
 			
-			//Espera hasta que le llega una petici�n de uni�n a la BC, cuando lo recibe return BC
+
 			s.receive(recv);
+			if(recv.getAddress().getHostAddress()!=InetAddress.getLocalHost().getHostAddress()) {
+				
+			
 			String newBC = new String(recv.getData(), 0, 
                     recv.getLength(), "UTF-8");
 			
@@ -65,13 +69,9 @@ public class newAdds_Thread extends Thread  {
 			
 			
 			
-			
-			if((ChatBlock.HashString(prevBlock.toString())== newBlock.getPrevBlockHash()) && newBlock.getTextHash()== ChatBlock.HashString(newBlock.getText())) {
-				//hay que borrar el ultimo elemento de la BC
+			if((!ChatBlock.HashString(prevBlock.toString()).equals(newBlock.getPrevBlockHash())) || !newBlock.getTextHash().equals(ChatBlock.HashString(newBlock.getText()))) {
 				
-				//ENVIAR UN ERROR.
 				String msg = "ERROR";
-				System.out.println(msg);
 				//respuesta a la direcci�n que env�a
 				InetAddress unicastanswer = recv.getAddress();
 				
@@ -83,6 +83,10 @@ public class newAdds_Thread extends Thread  {
 				 answerblock.close();
 				
 				System.err.println("BLOQUES CORRUPTOS");
+				System.err.println("\t" + ChatBlock.HashString(prevBlock.toString()));
+				
+				System.err.println("\t" + System.lineSeparator() + newBlock.getPrevBlockHash());
+				
 			}else {
 				
 				String msg = "OK";
@@ -92,8 +96,21 @@ public class newAdds_Thread extends Thread  {
 				DatagramSocket answerblock = new DatagramSocket();
 
 				DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), unicastanswer, ChatChain.SINGLECASTPORT);
+				
 				answerblock.send(packet);
 				
+				
+
+				Client client=ClientBuilder.newClient();;
+			    URI uri=UriBuilder.fromUri("http://localhost:8080/ChatChain/").build();
+				
+			    WebTarget target = client.target(uri);
+			    target.path("ChatChain").
+	            path("add").
+	            queryParam("justadd", "true").
+	            queryParam("text",URLEncoder.encode(newBC, "UTF-8")).
+	            request(MediaType.TEXT_PLAIN).get(String.class);
+			    
 				answerblock.close();
 
 				
@@ -102,7 +119,7 @@ public class newAdds_Thread extends Thread  {
 				
 				
 				
-				
+			}
 			}
 			}
 			
