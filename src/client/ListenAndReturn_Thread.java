@@ -3,6 +3,7 @@ package client;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.URI;
@@ -23,12 +24,10 @@ import org.glassfish.jersey.client.ClientConfig;
 import com.google.gson.Gson;
 
 import ChatChainModel.ChatBlock;
+import blockChange.ChatChain;
 
 public class ListenAndReturn_Thread extends Thread {
-	private final int JOINPORT = 65535;
-	private final String ASKFORCHAIN = "228.5.6.25";
-	private final String ASNWERCHAIN = "228.5.6.8";
-	private final static int SINGLECASTPORT = 5000;
+
 
 	
 	public void run() {
@@ -38,9 +37,9 @@ public class ListenAndReturn_Thread extends Thread {
 			boolean chainreturned = false;
 			
 			while(true) {
-			InetAddress askforChain = InetAddress.getByName(ASKFORCHAIN);
+			InetAddress askforChain = InetAddress.getByName(ChatChain.ASKFORCHAIN);
 
-			MulticastSocket s = new MulticastSocket(JOINPORT);
+			MulticastSocket s = new MulticastSocket(ChatChain.JOINPORT);
 			
 			s.joinGroup(askforChain);
 			
@@ -48,7 +47,7 @@ public class ListenAndReturn_Thread extends Thread {
 			DatagramPacket recv = new DatagramPacket(buf, buf.length);
 			s.receive(recv);
 			
-	ArrayList<ChatBlock> CC = askBCtoLocallhost();
+			ArrayList<ChatBlock> CC = askBCtoLocallhost();
 			
 			Gson gson = new Gson();
 			String toBeSended= gson.toJson(CC);
@@ -59,12 +58,17 @@ public class ListenAndReturn_Thread extends Thread {
 			
 			
 			
+			InetAddress unicastanswer = recv.getAddress();
 			
-			InetAddress group = InetAddress.getByName(ASNWERCHAIN);
-			MulticastSocket answer = new MulticastSocket(JOINPORT);
-			DatagramPacket cc = new DatagramPacket(output, output.length, group, JOINPORT);
+			DatagramSocket answerblock = new DatagramSocket();
+
+			DatagramPacket packet = new DatagramPacket(output, output.length, unicastanswer, ChatChain.ASNWERCHAINPORT);
 			Thread.sleep(500);
-			answer.send(cc);
+
+			answerblock.send(packet);
+
+			answerblock.close();
+			
 			}
 			//SENDCHAIN
 				

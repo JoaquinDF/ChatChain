@@ -1,30 +1,21 @@
 package blockChange;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.URI;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import javax.inject.Singleton;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -37,16 +28,15 @@ import client.newAdds_Thread;
 @Singleton
 public class ChatChain {
 
-	private MulticastSocket s;
 	private ArrayList<ChatBlock> ChatChain = new ArrayList<>();
 
-	private static final String ASKFORCHAIN = "228.5.6.25";
-	private final static int JOINPORT = 65535;
-	private final static int SINGLECASTPORT = 5000;
-	private static final String ASNWERCHAIN = "228.5.6.8";
-	private static final String MULTICASTBLOCK = "228.5.6.9";
-	private static final String BLOCKTOSHOW = "228.5.6.10";
-	private static final String ASNWERMULTICASTBLOCK = "228.5.6.19";
+	public static final String ASKFORCHAIN = "228.5.6.25";
+	public final static int JOINPORT = 65535;
+	public final static int SINGLECASTPORT = 5000;
+	public static final int ASNWERCHAINPORT = 5050;
+	public static final String MULTICASTBLOCK = "228.5.6.9";
+	public static final String BLOCKTOSHOW = "228.5.6.10";
+	public static final String ASNWERMULTICASTBLOCK = "228.5.6.19";
 
 	@GET // tipo de petición HTTP
 	@Produces(MediaType.TEXT_PLAIN) // tipo de texto devuelto
@@ -63,18 +53,14 @@ public class ChatChain {
 			DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
 			s.send(hi);
 
-			MulticastSocket r;
-			InetAddress updateChain;
-			updateChain = InetAddress.getByName(ASNWERCHAIN);
-
-			r = new MulticastSocket(JOINPORT);
-
-			r.joinGroup(updateChain);
-
+			
 			byte[] buf = new byte[10000000];
-			DatagramPacket recv = new DatagramPacket(buf, buf.length);
+			DatagramPacket recv  = new DatagramPacket(buf, buf.length);
+			DatagramSocket socket = new DatagramSocket(ASNWERCHAINPORT);
+			
+			socket.receive(recv);
 
-			r.receive(recv);
+			
 			String response = new String(recv.getData(), 0, recv.getLength(), "UTF-8");
 
 			setInitialBC(response);
@@ -144,21 +130,18 @@ public class ChatChain {
 	@GET // tipo de petición HTTP
 	@Produces(MediaType.TEXT_PLAIN) // tipo de texto devuelto
 	@Path("add") // ruta al método
-	public String addtext(@QueryParam(value = "text") String text, @QueryParam(value = "justadd") String justadd) { // el
-																													// método
-																													// debe
-																													// retornar
-																													// String
+	public String addtext(@QueryParam(value = "text") String text, @QueryParam(value = "justadd") String justadd) { 
 
 		ChatBlock Block = new ChatBlock(text);
 		if (justadd != null && justadd.equals("true")) {
 			
+			Block.setPrevBlockHash(getLastElement(getChatChain()));
 			getChatChain().add(Block);
 			return "ok";
 
 		}
 
-		// rest para add
+		
 
 		if (getLastElement(getChatChain()).getTimestamp() < System.currentTimeMillis()) {
 

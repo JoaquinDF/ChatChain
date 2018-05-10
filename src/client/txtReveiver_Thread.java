@@ -3,18 +3,25 @@ package client;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
+
 import com.google.gson.Gson;
 
 import ChatChainModel.ChatBlock;
+import blockChange.ChatChain;
 
 public class txtReveiver_Thread extends Thread {
 
-	private final int JOINPORT = 65535;
-	private final String BLOCKTOSHOW = "228.5.6.10";
+	
 	private Map<String,Long> msgList;
 	private String originaddress = "";
 	
@@ -28,9 +35,9 @@ public class txtReveiver_Thread extends Thread {
 			MulticastSocket s;
 			boolean chainreturned = false;
 			InetAddress askforChain;
-			askforChain = InetAddress.getByName(BLOCKTOSHOW);
-
-			s = new MulticastSocket(JOINPORT);
+			askforChain = InetAddress.getByName(ChatChain.BLOCKTOSHOW);
+			
+			s = new MulticastSocket(ChatChain.JOINPORT);
 
 			s.joinGroup(askforChain);
 			
@@ -39,6 +46,17 @@ public class txtReveiver_Thread extends Thread {
 			s.receive(recv);
 			
 			String msg = new String(recv.getData(), 0,recv.getLength());
+			
+
+			Client client=ClientBuilder.newClient();;
+		    URI uri=UriBuilder.fromUri("http://localhost:8080/ChatChain/").build();
+			
+		    WebTarget target = client.target(uri);
+		    target.path("ChatChain").
+            path("add").
+            queryParam("justadd", "true").
+            queryParam("text", msg).
+            request(MediaType.TEXT_PLAIN).get(String.class);
 			
 			
 			if(!msgList.containsKey(msg)) {

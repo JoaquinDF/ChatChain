@@ -14,8 +14,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 public class MainClient {
-	private static final String ASKFORCHAIN = "228.5.6.25";
-	private final static int JOINPORT = 65535;
+
 
 
 	public static void main(String[] args) throws Exception{

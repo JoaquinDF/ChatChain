@@ -27,26 +27,21 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import ChatChainModel.ChatBlock;
+import blockChange.ChatChain;
 
 public class newAdds_Thread extends Thread  {
 		
 	
-	private final static int JOINPORT = 65535;
-	private final String ASKFORCHAIN = "228.5.6.25";
-	private final String ASNWERCHAIN = "228.5.6.8";
-	private static final String MULTICASTBLOCK = "228.5.6.9";
-	private static final String ASNWERMULTICASTBLOCK = "228.5.6.19";
-	private final static int SINGLECASTPORT = 5000;
-
+	
 
 	public void run() {
 			System.out.println("updating BC");
 		try {
 			MulticastSocket s;
 			InetAddress updateChain;
-			updateChain = InetAddress.getByName(MULTICASTBLOCK);
+			updateChain = InetAddress.getByName(ChatChain.MULTICASTBLOCK);
 			while(true) {
-			s = new MulticastSocket(JOINPORT);
+			s = new MulticastSocket(ChatChain.JOINPORT);
 			
 			s.joinGroup(updateChain);
 			
@@ -82,7 +77,7 @@ public class newAdds_Thread extends Thread  {
 				
 				DatagramSocket answerblock = new DatagramSocket();
 
-				 DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), unicastanswer, SINGLECASTPORT);
+				 DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), unicastanswer, ChatChain.SINGLECASTPORT);
 				 answerblock.send(packet);
 				
 				 answerblock.close();
@@ -96,19 +91,11 @@ public class newAdds_Thread extends Thread  {
 				
 				DatagramSocket answerblock = new DatagramSocket();
 
-				DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), unicastanswer, SINGLECASTPORT);
+				DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), unicastanswer, ChatChain.SINGLECASTPORT);
 				answerblock.send(packet);
 				
 				
-				Client client=ClientBuilder.newClient();;
-			    URI uri=UriBuilder.fromUri("http://localhost:8080/ChatChain/").build();
 				
-			    WebTarget target = client.target(uri);
-			    target.path("ChatChain").
-                path("add").
-                queryParam("justadd", "true").
-                queryParam("text", newBlock.getText()).
-                request(MediaType.TEXT_PLAIN).get(String.class);
 			    
 			    
 				
