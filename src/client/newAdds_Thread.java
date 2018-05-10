@@ -94,7 +94,8 @@ public class newAdds_Thread extends Thread  {
 				DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), unicastanswer, ChatChain.SINGLECASTPORT);
 				answerblock.send(packet);
 				
-				
+				answerblock.close();
+
 				
 			    
 			    

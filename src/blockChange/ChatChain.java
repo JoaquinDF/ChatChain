@@ -33,7 +33,7 @@ public class ChatChain {
 	public static final String ASKFORCHAIN = "228.5.6.25";
 	public final static int JOINPORT = 65535;
 	public final static int SINGLECASTPORT = 5000;
-	public static final int ASNWERCHAINPORT = 5050;
+	public static final int ASNWERCHAINPORT = 5010;
 	public static final String MULTICASTBLOCK = "228.5.6.9";
 	public static final String BLOCKTOSHOW = "228.5.6.10";
 	public static final String ASNWERMULTICASTBLOCK = "228.5.6.19";
@@ -59,7 +59,7 @@ public class ChatChain {
 			DatagramSocket socket = new DatagramSocket(ASNWERCHAINPORT);
 			
 			socket.receive(recv);
-
+			socket.close();
 			
 			String response = new String(recv.getData(), 0, recv.getLength(), "UTF-8");
 
