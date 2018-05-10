@@ -28,6 +28,8 @@ public class ListenAndReturn_Thread extends Thread {
 	private final int JOINPORT = 65535;
 	private final String ASKFORCHAIN = "228.5.6.25";
 	private final String ASNWERCHAIN = "228.5.6.8";
+	private final static int SINGLECASTPORT = 5000;
+
 	
 	public void run() {
 			System.out.println("listening");

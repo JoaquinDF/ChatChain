@@ -4,8 +4,10 @@ package client;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.Socket;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ public class newAdds_Thread extends Thread  {
 	private final String ASNWERCHAIN = "228.5.6.8";
 	private static final String MULTICASTBLOCK = "228.5.6.9";
 	private static final String ASNWERMULTICASTBLOCK = "228.5.6.19";
+	private final static int SINGLECASTPORT = 5000;
 
 
 	public void run() {
@@ -74,11 +77,14 @@ public class newAdds_Thread extends Thread  {
 				//ENVIAR UN ERROR.
 				String msg = "ERROR";
 				System.out.println(msg);
+				//respuesta a la dirección que envía
+				InetAddress unicastanswer = recv.getAddress();
 				
-				InetAddress group = InetAddress.getByName(ASNWERMULTICASTBLOCK);
-				MulticastSocket answerblock = new MulticastSocket(JOINPORT);
-				DatagramPacket error = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
-				s.send(error);
+				DatagramSocket answerblock = new DatagramSocket();
+
+				 DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), unicastanswer, SINGLECASTPORT);
+				 answerblock.send(packet);
+				
 				
 				
 				System.err.println("BLOQUES CORRUPTOS");
@@ -86,11 +92,12 @@ public class newAdds_Thread extends Thread  {
 				
 				String msg = "OK";
 				
-				InetAddress group = InetAddress.getByName(ASNWERMULTICASTBLOCK);
-				MulticastSocket answerblock = new MulticastSocket(JOINPORT);
-				DatagramPacket ok = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
-				System.out.println("Enviando el OK al bloque Multicast");
-				s.send(ok);
+				InetAddress unicastanswer = recv.getAddress();
+				
+				DatagramSocket answerblock = new DatagramSocket();
+
+				DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), unicastanswer, SINGLECASTPORT);
+				answerblock.send(packet);
 				
 				
 				Client client=ClientBuilder.newClient();;

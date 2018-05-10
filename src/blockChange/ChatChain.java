@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.URI;
@@ -41,6 +42,7 @@ public class ChatChain {
 
 	private static final String ASKFORCHAIN = "228.5.6.25";
 	private final static int JOINPORT = 65535;
+	private final static int SINGLECASTPORT = 5000;
 	private static final String ASNWERCHAIN = "228.5.6.8";
 	private static final String MULTICASTBLOCK = "228.5.6.9";
 	private static final String BLOCKTOSHOW = "228.5.6.10";
@@ -150,7 +152,6 @@ public class ChatChain {
 
 		ChatBlock Block = new ChatBlock(text);
 		if (justadd != null && justadd.equals("true")) {
-			System.out.println("aquí entra");
 			
 			getChatChain().add(Block);
 			return "ok";
@@ -158,7 +159,6 @@ public class ChatChain {
 		}
 
 		// rest para add
-		System.out.println("justadd=false");
 
 		if (getLastElement(getChatChain()).getTimestamp() < System.currentTimeMillis()) {
 
@@ -174,24 +174,22 @@ public class ChatChain {
 				DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
 				MulticastBlock.send(hi);
 
-				InetAddress answer = InetAddress.getByName(ASNWERMULTICASTBLOCK);
-
-				MulticastSocket MulticastBlockAnswer = new MulticastSocket(JOINPORT);
-
-				MulticastBlockAnswer.joinGroup(answer);
+				
 
 				byte[] buf = new byte[10000000];
-				DatagramPacket recv = new DatagramPacket(buf, buf.length);
+				DatagramPacket recv  = new DatagramPacket(buf, buf.length);
+				DatagramSocket socket = new DatagramSocket(SINGLECASTPORT);
+				
+						
+				socket.receive(recv);
 
-				MulticastBlockAnswer.receive(recv);
 				
 				String response = new String(recv.getData(), 0, recv.getLength(), "UTF-8");
-				System.out.println("La respuesta del Multicast es:" + response);
 				if (response.equals("ERROR")) {
 
 				} else if (response.equals("OK")) {
-					System.out.println("enviando el multicast");
 
+					getChatChain().add(Block);
 
 					group = InetAddress.getByName(BLOCKTOSHOW);
 					MulticastSocket MulticastShow = new MulticastSocket(JOINPORT);

@@ -27,7 +27,7 @@ public class MainClient {
 		
 		
 		Client clientjoin=ClientBuilder.newClient();;
-	    URI urijoin=UriBuilder.fromUri("http://172.20.1.71:8080/ChatChain/").build();
+	    URI urijoin=UriBuilder.fromUri("http://localhost:8080/ChatChain/").build();
 	    WebTarget targetjoin = clientjoin.target(urijoin);
 	    
 	    
@@ -38,7 +38,8 @@ public class MainClient {
                 get(String.class)
                 .toString();
 	    
-	   	   System.out.println(joined);
+	   	   System.out.println("Success BlockChain Join" + System.lineSeparator() + "Ready to Receive" );
+	   	   
 		   txtReveiver_Thread receiver = new txtReveiver_Thread();
 		   receiver.start();
 				   
@@ -50,7 +51,7 @@ public class MainClient {
 				txt = keyboard.nextLine();
 				
 				Client client=ClientBuilder.newClient();;
-			    URI uri=UriBuilder.fromUri("http://172.20.1.71:8080/ChatChain/").build();
+			    URI uri=UriBuilder.fromUri("http://localhost:8080/ChatChain/").build();
 				
 			    WebTarget target = client.target(uri);
 			    target.path("ChatChain").
