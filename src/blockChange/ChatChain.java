@@ -79,7 +79,8 @@ public class ChatChain {
 	public String getBC() { // el método debe retornar String
 
 		Gson gson = new Gson();
-		String togo = gson.toJson(getChatChain()).toString();
+		String togo = gson.toJson(getChatChain()).toString();newAdds.start();
+		listenandReturn.start();
 		return togo;
 
 	}
@@ -219,6 +220,9 @@ public class ChatChain {
 
 	}
 
+	ListenAndReturn_Thread listenandReturn = null;
+	newAdds_Thread newAdds = null;
+	
 	private void setInitialBC(String IBC) {
 
 		try {
@@ -232,12 +236,17 @@ public class ChatChain {
 				System.err.println(e);
 			}
 			System.out.println("Setting initial");
+			
 			setChatChain(ObjetoMensaje);
-			ListenAndReturn_Thread listenandReturn = new ListenAndReturn_Thread();
-			newAdds_Thread newAdds = new newAdds_Thread();
-
-			listenandReturn.start();
-			newAdds.start();
+			
+			 if(newAdds == null) {
+				 listenandReturn = new ListenAndReturn_Thread();
+				 newAdds = new newAdds_Thread();
+				 newAdds.start();
+				listenandReturn.start();
+			 }
+			
+			
 		} catch (Exception e) {
 
 		}
