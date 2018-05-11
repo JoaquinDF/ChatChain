@@ -56,7 +56,7 @@ public class newAdds_Thread extends Thread  {
 			String newBC = new String(recv.getData(), 0, 
                     recv.getLength(), "UTF-8");
 			
-
+			System.out.println("Me llaga un paquete para comprobar");
 			Gson gson = new Gson();
 			
 			
@@ -92,7 +92,7 @@ public class newAdds_Thread extends Thread  {
 			}else {
 				
 				String msg = "OK";
-				
+				System.out.println("Packet ok");
 				InetAddress unicastanswer = recv.getAddress();
 				
 				DatagramSocket answerblock = new DatagramSocket();
@@ -100,7 +100,8 @@ public class newAdds_Thread extends Thread  {
 				DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), unicastanswer, ChatChain.SINGLECASTPORT);
 				
 				answerblock.send(packet);
-				
+			    
+				answerblock.close();
 				
 
 				Client client=ClientBuilder.newClient();;
@@ -113,7 +114,7 @@ public class newAdds_Thread extends Thread  {
 	            queryParam("text",URLEncoder.encode(newBC, "UTF-8")).
 	            request(MediaType.TEXT_PLAIN).get(String.class);
 			    
-				answerblock.close();
+			
 
 				
 			    

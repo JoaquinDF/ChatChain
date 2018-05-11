@@ -44,26 +44,15 @@ public class txtReveiver_Thread extends Thread {
 			byte[] buf = new byte[1000000];
 			DatagramPacket recv = new DatagramPacket(buf, buf.length);
 			s.receive(recv);
-			
+			System.out.println("recibo el multicast");
 			String msg = new String(recv.getData(), 0,recv.getLength());
 			s.close();
 
-			
-			
-			
-			if(!msgList.containsKey(msg)) {
-				msgList.put(msg, System.currentTimeMillis());
-				System.out.println("< " + msg);
+			System.out.println("< " + msg);
 
-			}else {
-				if(Math.abs((msgList.get(msg) - System.currentTimeMillis()))>1000) {
-				
-					System.out.println("< " + msg);
-					
-					msgList.put(msg, System.currentTimeMillis());
-				}
-			}			
-				
+			
+			
+			
 			
 			
 		} catch (Exception e) {

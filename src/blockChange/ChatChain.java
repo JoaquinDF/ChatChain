@@ -45,8 +45,7 @@ public class ChatChain {
 	public String Join() { // el método debe retornar String
 
 		try {
-			if(getChatChain().size()!=0)return("ok");
-
+			
 			String msg = "Join";
 			System.out.println(msg);
 
@@ -64,7 +63,7 @@ public class ChatChain {
 			socket.close();
 			
 			String response = new String(recv.getData(), 0, recv.getLength(), "UTF-8");
-
+			System.out.println("response data " + response);
 			setInitialBC(response);
 
 		} catch (IOException e1) {
@@ -107,8 +106,6 @@ public class ChatChain {
 			return "Ilegal BC UPdate";
 		}
 
-		ListenAndReturn_Thread listenandReturn = new ListenAndReturn_Thread();
-		listenandReturn.start();
 
 		return "updatedBC";
 
@@ -168,7 +165,7 @@ public class ChatChain {
 				MulticastSocket MulticastBlock = new MulticastSocket(JOINPORT);
 				DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
 				MulticastBlock.send(hi);
-
+				System.out.println("Multicasteo el Bloque");
 				
 
 				byte[] buf = new byte[10000000];
@@ -184,13 +181,13 @@ public class ChatChain {
 
 				} else if (response.equals("OK")) {
 
-
+					System.out.println("Me ha llegado el acuerdo ok");
 					InetAddress groupBlockToShow = InetAddress.getByName(BLOCKTOSHOW);
 					MulticastSocket MulticastShow = new MulticastSocket(JOINPORT);
 					DatagramPacket sendShow = new DatagramPacket(Block.getText().getBytes(), Block.getText().length(),
 							groupBlockToShow, JOINPORT);
 					MulticastBlock.send(sendShow);
-					
+					System.out.println("Multicasteo el resultado");
 				}
 				socket.close();
 
@@ -236,7 +233,7 @@ public class ChatChain {
 			} catch (Exception e) {
 				System.err.println(e);
 			}
-
+			System.out.println("Setting initial");
 			setChatChain(ObjetoMensaje);
 			ListenAndReturn_Thread listenandReturn = new ListenAndReturn_Thread();
 			newAdds_Thread newAdds = new newAdds_Thread();
