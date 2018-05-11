@@ -51,7 +51,6 @@ public class newAdds_Thread extends Thread  {
 			
 
 			s.receive(recv);
-			if(!recv.getAddress().getHostAddress().equals(InetAddress.getLocalHost().getHostAddress())) {
 				
 			
 			String newBC = new String(recv.getData(), 0, 
@@ -123,7 +122,7 @@ public class newAdds_Thread extends Thread  {
 				
 				
 			}
-			}
+			
 			}
 			
 		} catch (UnknownHostException e) {
