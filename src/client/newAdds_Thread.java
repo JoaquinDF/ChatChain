@@ -51,7 +51,7 @@ public class newAdds_Thread extends Thread  {
 			
 
 			s.receive(recv);
-			if(recv.getAddress().getHostAddress()!=InetAddress.getLocalHost().getHostAddress()) {
+			if(!recv.getAddress().getHostAddress().equals(InetAddress.getLocalHost().getHostAddress())) {
 				
 			
 			String newBC = new String(recv.getData(), 0, 
@@ -69,7 +69,7 @@ public class newAdds_Thread extends Thread  {
 			
 			
 			
-			if((!ChatBlock.HashString(prevBlock.toString()).equals(newBlock.getPrevBlockHash())) || !newBlock.getTextHash().equals(ChatBlock.HashString(newBlock.getText()))) {
+			if((!ChatBlock.HashString(gson.toJson(prevBlock)).equals(newBlock.getPrevBlockHash())) || !newBlock.getTextHash().equals(ChatBlock.HashString(newBlock.getText()))) {
 				
 				String msg = "ERROR";
 				//respuesta a la direcci�n que env�a
@@ -83,9 +83,12 @@ public class newAdds_Thread extends Thread  {
 				 answerblock.close();
 				
 				System.err.println("BLOQUES CORRUPTOS");
-				System.err.println("\t" + ChatBlock.HashString(prevBlock.toString()));
+				System.err.println("\t" + gson.toJson(prevBlock));
+
+
+				System.err.println("\t" + ChatBlock.HashString(gson.toJson(prevBlock)));
 				
-				System.err.println("\t" + System.lineSeparator() + newBlock.getPrevBlockHash());
+				System.err.println("\t" + newBlock.getPrevBlockHash());
 				
 			}else {
 				

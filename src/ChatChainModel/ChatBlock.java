@@ -6,6 +6,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
+import com.google.gson.Gson;
+
 public class ChatBlock {
 	
 	private String text;
@@ -28,13 +30,16 @@ public class ChatBlock {
 	
 	public static String HashString(String text) {
 		try {
+			System.out.println("\t toCipher " + text);
+			
 			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
 			
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
 			
 			byte[] hash = digest.digest(text.getBytes("UTF-8"));
 			String encoded = Base64.getEncoder().encodeToString(hash);
-			
+			System.out.println("\t Encoded " + encoded);
+
 			return (encoded); 
 			
 			
@@ -59,7 +64,9 @@ public class ChatBlock {
 	}
 	
 	public void setPrevBlockHash(ChatBlock C) {
-		this.prevBlockHash = HashString(C.toString());
+		Gson gson = new Gson();
+		
+		this.prevBlockHash = HashString(gson.toJson(C));
 	}
 
 	public String getText() {
