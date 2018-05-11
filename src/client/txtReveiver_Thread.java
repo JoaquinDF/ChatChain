@@ -3,57 +3,33 @@ package client;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
-
-import com.google.gson.Gson;
-
-import ChatChainModel.ChatBlock;
 import blockChange.ChatChain;
 
 public class txtReveiver_Thread extends Thread {
 
-	
-	
-	
-	
 	public void run() {
-		System.out.println("recibiendo" + System.lineSeparator());
-		while(true) {
-		try {
-			MulticastSocket s;
-			InetAddress askforChain;
-			askforChain = InetAddress.getByName(ChatChain.BLOCKTOSHOW);
-			
-			s = new MulticastSocket(ChatChain.JOINPORT);
+		System.out.println("Listening" + System.lineSeparator());
+		while (true) {
+			try {
+				MulticastSocket s;
+				InetAddress askforChain;
+				askforChain = InetAddress.getByName(ChatChain.BLOCKTOSHOW);
 
-			s.joinGroup(askforChain);
-			
-			byte[] buf = new byte[1000000];
-			DatagramPacket recv = new DatagramPacket(buf, buf.length);
-			s.receive(recv);
-			System.out.println("recibo el multicast");
-			String msg = new String(recv.getData(), 0,recv.getLength());
-			s.close();
+				s = new MulticastSocket(ChatChain.JOINPORT);
 
-			System.out.println("< " + msg);
+				s.joinGroup(askforChain);
 
-			
-			
-			
-			
-			
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+				byte[] buf = new byte[1000000];
+				DatagramPacket recv = new DatagramPacket(buf, buf.length);
+				s.receive(recv);
+				String msg = new String(recv.getData(), 0, recv.getLength());
+				s.close();
+
+				System.out.println("< " + msg);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

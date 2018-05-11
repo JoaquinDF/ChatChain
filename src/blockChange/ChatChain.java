@@ -7,7 +7,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,7 +43,7 @@ public class ChatChain {
 	public String Join() { // el método debe retornar String
 
 		try {
-			
+
 			String msg = "Join";
 			System.out.println(msg);
 
@@ -53,14 +52,13 @@ public class ChatChain {
 			DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
 			s.send(hi);
 
-			
 			byte[] buf = new byte[10000000];
-			DatagramPacket recv  = new DatagramPacket(buf, buf.length);
+			DatagramPacket recv = new DatagramPacket(buf, buf.length);
 			DatagramSocket socket = new DatagramSocket(ASNWERCHAINPORT);
-			
+
 			socket.receive(recv);
 			socket.close();
-			
+
 			String response = new String(recv.getData(), 0, recv.getLength(), "UTF-8");
 			System.out.println("response data " + response);
 			setInitialBC(response);
@@ -81,58 +79,58 @@ public class ChatChain {
 
 		Gson gson = new Gson();
 		String togo = gson.toJson(getChatChain()).toString();
-		
+
 		return togo;
 
 	}
-	
+
 	@GET // tipo de petición HTTP
 	@Produces(MediaType.TEXT_HTML) // tipo de texto devuelto
 	@Path("prettyPrint") // ruta al método
 	public String print() { // el método debe retornar String
-		
+
 		StringBuilder sb = new StringBuilder();
 		Gson gson = new Gson();
-		
+
 		sb.append("<table style=\"width:100%\">");
-		
+
 		sb.append("<tr>");
-		
+
 		sb.append("<th>Fecha y hora</th>");
-		
+
 		sb.append("<th>Texto</th>");
-		
+
 		sb.append("<th>Hash del bloque</th>");
-		
+
 		sb.append("<th>Hash del bloque anterior</th>");
-		
+
 		sb.append("</tr>");
 
 		getChatChain().forEach(chatBlock -> {
 			sb.append("<tr>");
-			
+
 			sb.append("<td>");
 			Date date = new Date(chatBlock.getTimestamp());
 			sb.append(date.toString());
 			sb.append("</td>");
-			
+
 			sb.append("<td>");
 			sb.append(chatBlock.getText());
 			sb.append("</td>");
-			
+
 			sb.append("<td>");
 			sb.append(ChatBlock.HashString(gson.toJson(chatBlock)));
 			sb.append("</td>");
-			
+
 			sb.append("<td>");
 			sb.append(chatBlock.getPrevBlockHash());
 			sb.append("</td>");
-			
+
 			sb.append("</tr>");
 		});
-		
+
 		sb.append("</table>");
-		
+
 		return sb.toString();
 
 	}
@@ -157,7 +155,6 @@ public class ChatChain {
 			return "Ilegal BC UPdate";
 		}
 
-
 		return "updatedBC";
 
 	}
@@ -181,15 +178,15 @@ public class ChatChain {
 	@GET // tipo de petición HTTP
 	@Produces(MediaType.TEXT_PLAIN) // tipo de texto devuelto
 	@Path("add") // ruta al método
-	public String addtext(@QueryParam(value = "text") String text, @QueryParam(value = "justadd") String justadd) { 
+	public String addtext(@QueryParam(value = "text") String text, @QueryParam(value = "justadd") String justadd) {
 
 		ChatBlock Block = new ChatBlock(text);
 		if (justadd != null && justadd.equals("true")) {
 			Gson gson = new Gson();
 			try {
-				text = URLDecoder.decode(text,"UTF-8");
+				text = URLDecoder.decode(text, "UTF-8");
 				System.out.println(text);
-				ChatBlock newBlock = gson.fromJson(text,ChatBlock.class);
+				ChatBlock newBlock = gson.fromJson(text, ChatBlock.class);
 				newBlock.setPrevBlockHash(getLastElement(getChatChain()));
 				getChatChain().add(newBlock);
 				return "ok";
@@ -197,11 +194,8 @@ public class ChatChain {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 
 		}
-
-		
 
 		if (getLastElement(getChatChain()).getTimestamp() < System.currentTimeMillis()) {
 
@@ -217,16 +211,13 @@ public class ChatChain {
 				DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(), group, JOINPORT);
 				MulticastBlock.send(hi);
 				System.out.println("Multicasteo el Bloque");
-				
 
 				byte[] buf = new byte[10000000];
-				DatagramPacket recv  = new DatagramPacket(buf, buf.length);
+				DatagramPacket recv = new DatagramPacket(buf, buf.length);
 				DatagramSocket socket = new DatagramSocket(SINGLECASTPORT);
-				
-						
+
 				socket.receive(recv);
 
-				
 				String response = new String(recv.getData(), 0, recv.getLength(), "UTF-8");
 				if (response.equals("ERROR")) {
 
@@ -274,7 +265,7 @@ public class ChatChain {
 
 	ListenAndReturn_Thread listenandReturn = null;
 	newAdds_Thread newAdds = null;
-	
+
 	private void setInitialBC(String IBC) {
 
 		try {
@@ -288,17 +279,16 @@ public class ChatChain {
 				System.err.println(e);
 			}
 			System.out.println("Setting initial");
-			
+
 			setChatChain(ObjetoMensaje);
-			
-			 if(newAdds == null) {
-				 listenandReturn = new ListenAndReturn_Thread();
-				 newAdds = new newAdds_Thread();
-				 newAdds.start();
+
+			if (newAdds == null) {
+				listenandReturn = new ListenAndReturn_Thread();
+				newAdds = new newAdds_Thread();
+				newAdds.start();
 				listenandReturn.start();
-			 }
-			
-			
+			}
+
 		} catch (Exception e) {
 
 		}
