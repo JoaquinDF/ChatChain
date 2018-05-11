@@ -1,4 +1,4 @@
-package client;
+package blockChange;
 
 
 import java.io.IOException;
@@ -28,7 +28,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import ChatChainModel.ChatBlock;
-import blockChange.ChatChain;
 
 public class newAdds_Thread extends Thread  {
 		
@@ -71,7 +70,6 @@ public class newAdds_Thread extends Thread  {
 			if((!ChatBlock.HashString(gson.toJson(prevBlock)).equals(newBlock.getPrevBlockHash())) || !newBlock.getTextHash().equals(ChatBlock.HashString(newBlock.getText()))) {
 				
 				String msg = "ERROR";
-				//respuesta a la direcci�n que env�a
 				InetAddress unicastanswer = recv.getAddress();
 				
 				DatagramSocket answerblock = new DatagramSocket();

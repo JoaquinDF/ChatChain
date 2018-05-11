@@ -22,8 +22,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import ChatChainModel.ChatBlock;
-import client.ListenAndReturn_Thread;
-import client.newAdds_Thread;
 
 @Path("ChatChain") // ruta a la clase
 @Singleton

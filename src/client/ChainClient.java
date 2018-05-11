@@ -19,7 +19,7 @@ public class ChainClient {
 	public static void main(String[] args) throws Exception{
 		// TODO Auto-generated method stub
 		
-		String Address = "localhost";
+		String Address = args[0];
 		
 		
 		

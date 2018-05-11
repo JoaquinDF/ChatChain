@@ -1,4 +1,4 @@
-package client;
+package blockChange;
 
 
 import java.io.IOException;
@@ -24,7 +24,6 @@ import org.glassfish.jersey.client.ClientConfig;
 import com.google.gson.Gson;
 
 import ChatChainModel.ChatBlock;
-import blockChange.ChatChain;
 
 public class ListenAndReturn_Thread extends Thread {
 

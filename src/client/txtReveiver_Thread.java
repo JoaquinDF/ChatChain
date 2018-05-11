@@ -22,18 +22,14 @@ import blockChange.ChatChain;
 public class txtReveiver_Thread extends Thread {
 
 	
-	private Map<String,Long> msgList;
-	private String originaddress = "";
 	
 	
 	
 	public void run() {
 		System.out.println("recibiendo" + System.lineSeparator());
 		while(true) {
-			msgList = new HashMap<>();
 		try {
 			MulticastSocket s;
-			boolean chainreturned = false;
 			InetAddress askforChain;
 			askforChain = InetAddress.getByName(ChatChain.BLOCKTOSHOW);
 			
