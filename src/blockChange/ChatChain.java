@@ -10,6 +10,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
@@ -79,9 +80,60 @@ public class ChatChain {
 	public String getBC() { // el método debe retornar String
 
 		Gson gson = new Gson();
-		String togo = gson.toJson(getChatChain()).toString();newAdds.start();
-		listenandReturn.start();
+		String togo = gson.toJson(getChatChain()).toString();
+		
 		return togo;
+
+	}
+	
+	@GET // tipo de petición HTTP
+	@Produces(MediaType.TEXT_HTML) // tipo de texto devuelto
+	@Path("prettyPrint") // ruta al método
+	public String print() { // el método debe retornar String
+		
+		StringBuilder sb = new StringBuilder();
+		Gson gson = new Gson();
+		
+		sb.append("<table style=\"width:100%\">");
+		
+		sb.append("<tr>");
+		
+		sb.append("<th>Fecha y hora</th>");
+		
+		sb.append("<th>Texto</th>");
+		
+		sb.append("<th>Hash del bloque</th>");
+		
+		sb.append("<th>Hash del bloque anterior</th>");
+		
+		sb.append("</tr>");
+
+		getChatChain().forEach(chatBlock -> {
+			sb.append("<tr>");
+			
+			sb.append("<td>");
+			Date date = new Date(chatBlock.getTimestamp());
+			sb.append(date.toString());
+			sb.append("</td>");
+			
+			sb.append("<td>");
+			sb.append(chatBlock.getText());
+			sb.append("</td>");
+			
+			sb.append("<td>");
+			sb.append(ChatBlock.HashString(gson.toJson(chatBlock)));
+			sb.append("</td>");
+			
+			sb.append("<td>");
+			sb.append(chatBlock.getPrevBlockHash());
+			sb.append("</td>");
+			
+			sb.append("</tr>");
+		});
+		
+		sb.append("</table>");
+		
+		return sb.toString();
 
 	}
 
